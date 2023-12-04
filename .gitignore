@@ -1,10 +1,11 @@
 data_msr_vtt/msr_vtt_category_15_videoId_cap_data.json
 data_msr_vtt/video_id_tokenized_cap.json
 data_msr_vtt/cat15_visual_video_id_feat.json
-data_msr_vtt/msr_vtt_cat15_d4rl_dataset.json
+gym/data/msr_vtt_cat15_d4rl_dataset.json
 data_msr_vtt/cat15_encode_80_frames
 data_msr_vtt/cat15_encode_all_frames
 data_msr_vtt/__pycache__/
 data_msr_vtt/cider_metric/__pycache__/
+gym/data/msr_vtt_cat15_d4rl_dataset.pkl
 
 

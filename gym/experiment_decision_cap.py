@@ -1,3 +1,5 @@
+import json
+
 import gym
 import numpy as np
 import torch
@@ -34,7 +36,7 @@ def experiment(
     model_type = variant['model_type']
     group_name = f'{exp_prefix}-{env_name}-{dataset}'
     exp_prefix = f'{group_name}-{random.randint(int(1e5), int(1e6) - 1)}'
-    print(env_name)
+
     if env_name == 'hopper':
         env = gym.make('Hopper-v3')
         max_ep_len = 1000
@@ -56,24 +58,46 @@ def experiment(
         max_ep_len = 100
         env_targets = [76, 40]
         scale = 10.
+    elif env_name == "msr_vtt":
+        max_ep_len = 20
+        # mean returns = 3.92 # average return ( some of rewards ) in each episode
+        # num_eval_episodes =100 (evaluation will be done for 100 episodes, and mean returns will be received)
+        env_targets = [3.92]
+        scale =1
     else:
         raise NotImplementedError
 
     if model_type == 'bc':
         env_targets = env_targets[:1]  # since BC ignores target, no need for different evaluations
 
-    state_dim = env.observation_space.shape[0]
-    act_dim = env.action_space.shape[0]
+    # state = env.reset()
+    # print(f"state: {state.shape}")
+    # print(type(state))
+    # print(state)
+
+    # hopper
+    # action dimension: 3
+    # state dimension: 11
+    # state_dim = env.observation_space.shape[0]
+    # act_dim = env.action_space.shape[0]
 
 
-    print(f"action dimension: {type(act_dim)}")
-    print(f"state dimension: {state_dim}")
+    # state_dim = 1024 # observations 1x1024
+    # act_dim = 3 #actions/word vectors 1x3
+
     # load dataset
-    dataset_path = f'data/{env_name}-{dataset}-v2.pkl'
-    dataset_path = "./gym/data/hopper-medium-v2.pkl"
+    dataset_path = "./data/msr_vtt_cat15_d4rl_dataset.pkl"
+    dataset_path_2 = "./data/hopper-medium-v2.pkl"
     with open(dataset_path, 'rb') as f:
         trajectories = pickle.load(f)
 
+    # print(f"state_dim: {trajectories[0]['observations'].shape[1]}")
+    # print(f"act_dim: {trajectories[0]['actions'].shape[1]}")
+    state_dim = trajectories[0]['observations'].shape[1] #1024
+    act_dim = trajectories[0]['actions'].shape[1] #3
+
+    # print(trajectories[0]) #[ 0.06783838 -0.9049719  -0.5331855 ] <-- hopper output
+    # print(len(trajectories)) #2199
     # save all path information into separate lists
     mode = variant.get('mode', 'normal')
     states, traj_lens, returns = [], [], []
@@ -81,24 +105,36 @@ def experiment(
         if mode == 'delayed':  # delayed: all rewards moved to end of trajectory
             path['rewards'][-1] = path['rewards'].sum()
             path['rewards'][:-1] = 0.
+        # print(path)
         states.append(path['observations'])
         traj_lens.append(len(path['observations']))
         returns.append(path['rewards'].sum())
+
     traj_lens, returns = np.array(traj_lens), np.array(returns)
+
+    # print("states")
+    # print(np.array(states[0][0]).shape) #(1024,)
+    # print(np.array(states[0][0]))# [ 0.34689599  0.1342805   0.01525949 ... -0.46926677 -0.05507876  0.06334257]
+    # print(traj_lens)
+    # print(returns)
 
     # used for input normalization
     states = np.concatenate(states, axis=0)
+    # print(type(states)) #<class 'numpy.ndarray'>
+    # print(states.shape) #(21018, 1024)
     state_mean, state_std = np.mean(states, axis=0), np.std(states, axis=0) + 1e-6
 
-    num_timesteps = sum(traj_lens)
-
+    num_timesteps = sum(traj_lens) #21018
+    # print(num_timesteps)
+    #
     print('=' * 50)
     print(f'Starting new experiment: {env_name} {dataset}')
+
     print(f'{len(traj_lens)} trajectories, {num_timesteps} timesteps found')
     print(f'Average return: {np.mean(returns):.2f}, std: {np.std(returns):.2f}')
     print(f'Max return: {np.max(returns):.2f}, min: {np.min(returns):.2f}')
     print('=' * 50)
-
+    #
     K = variant['K']
     batch_size = variant['batch_size']
     num_eval_episodes = variant['num_eval_episodes']
@@ -171,10 +207,11 @@ def experiment(
         def fn(model):
             returns, lengths = [], []
             for _ in range(num_eval_episodes):
+                # print(f"eval ep: {_}")
                 with torch.no_grad():
                     if model_type == 'dt':
                         ret, length = evaluate_episode_rtg(
-                            env,
+                            trajectories,
                             state_dim,
                             act_dim,
                             model,
@@ -201,6 +238,9 @@ def experiment(
                         )
                 returns.append(ret)
                 lengths.append(length)
+                # print(returns)
+                # print(lengths)
+
             return {
                 f'target_{target_rew}_return_mean': np.mean(returns),
                 f'target_{target_rew}_return_std': np.std(returns),
@@ -210,6 +250,7 @@ def experiment(
         return fn
 
     if model_type == 'dt':
+
         model = DecisionTransformer(
             state_dim=state_dim,
             act_dim=act_dim,
@@ -238,6 +279,8 @@ def experiment(
     model = model.to(device=device)
 
     warmup_steps = variant['warmup_steps']
+    # print(f"warmup_steps{warmup_steps}")
+
     optimizer = torch.optim.AdamW(
         model.parameters(),
         lr=variant['learning_rate'],
@@ -276,18 +319,35 @@ def experiment(
     #         project='decision-transformer',
     #         config=variant
     #     )
-        # wandb.watch(model)  # wandb has some bug
+    #     # wandb.watch(model)  # wandb has some bug
+    #
+    # for iter in range(variant['max_iters']):
+    #     outputs = trainer.train_iteration(num_steps=variant['num_steps_per_iter'], iter_num=iter+1, print_logs=True)
+    #     if log_to_wandb:
+    #         wandb.log(outputs)
+    # print(model.state_dict())
 
+    out=[]
+    print("training started")
     for iter in range(variant['max_iters']):
         outputs = trainer.train_iteration(num_steps=variant['num_steps_per_iter'], iter_num=iter+1, print_logs=True)
-        # if log_to_wandb:
-        #     wandb.log(outputs)
+        # print(outputs)
+        out.append(outputs)
 
+    file_path = "./results/decision_cap_model.pth"
+    torch.save(model.state_dict(), file_path)
 
+    with open("./results/log.json",'w') as f :
+        json.dump(out,f,indent=4)
+
+    # file_path = "./result/decision_cap_model.pth"
+
+    # torch.save(model.sate_dict(), file_path)
+    # model.load_state_dict(torch.load(file_path))
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('--env', type=str, default='hopper')
-    parser.add_argument('--dataset', type=str, default='medium')  # medium, medium-replay, medium-expert, expert
+    parser.add_argument('--env', type=str, default='msr_vtt') #msr_vtt, hopper
+    parser.add_argument('--dataset', type=str, default='cat15')  # medium, medium-replay, medium-expert, expert, cat15
     parser.add_argument('--mode', type=str, default='normal')  # normal for standard setting, delayed for sparse
     parser.add_argument('--K', type=int, default=20)
     parser.add_argument('--pct_traj', type=float, default=1.)
@@ -302,8 +362,8 @@ if __name__ == '__main__':
     parser.add_argument('--weight_decay', '-wd', type=float, default=1e-4)
     parser.add_argument('--warmup_steps', type=int, default=10000)
     parser.add_argument('--num_eval_episodes', type=int, default=100)
-    parser.add_argument('--max_iters', type=int, default=10)
-    parser.add_argument('--num_steps_per_iter', type=int, default=10000)
+    parser.add_argument('--max_iters', type=int, default=1051)
+    parser.add_argument('--num_steps_per_iter', type=int, default=20) # total steps 21018 / 20 (steps/iter or 20 episode per iteration), total iteration 1051
     parser.add_argument('--device', type=str, default='cuda')
     parser.add_argument('--log_to_wandb', '-w', type=bool, default=False)
     

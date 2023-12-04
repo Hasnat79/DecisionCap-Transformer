@@ -105,7 +105,7 @@ if __name__ == '__main__':
         for video_id,caps in video_id_tokenized_cap.items():
             # print(video_id,len(caps))
             # print(caps[0])
-            video_ids.append(video_id)
+
             for tokenized_cap in caps:
 
                     # action and terminals steps
@@ -119,7 +119,7 @@ if __name__ == '__main__':
                             terminals.append(True)
                         else: terminals.append(False)
 
-                    # reward steps
+                    # reward steps & video_ids
 
                     for i in range(len(tokenized_cap)):
 
@@ -129,6 +129,9 @@ if __name__ == '__main__':
                         # print(f"ref tokens: {tokenized_cap}\n candidate tokens: {cand_tokens}")
                         # print(f"reward:{cal_cider_score(ref_tokens,cand_tokens)} ")
                         rewards.append(cal_cider_score(ref_tokens,cand_tokens))
+                        # 1. "it" , "it is a dog"
+                        # 2. "it is ", "it is a dog"
+                        video_ids.append(video_id)
 
                     # observation steps
                     word_count = len(tokenized_cap)
@@ -159,14 +162,20 @@ if __name__ == '__main__':
                         observation = observation.tolist()
                         # print(len(observation)) #12
                         observations.append(observation)
+
             pbar.update(1)
+
+        # print(len(observations))
+        # print(len(video_ids))
 
     msr_vtt_cat15_d4rl_dataset['actions'] = actions
     msr_vtt_cat15_d4rl_dataset['terminals'] =terminals
     msr_vtt_cat15_d4rl_dataset['rewards'] = rewards
     msr_vtt_cat15_d4rl_dataset['observations'] = observations
     msr_vtt_cat15_d4rl_dataset['video_ids'] = video_ids
-    save_json("./msr_vtt_cat15_d4rl_dataset.json", msr_vtt_cat15_d4rl_dataset)
+
+
+    save_json("../gym/data/msr_vtt_cat15_d4rl_dataset.json", msr_vtt_cat15_d4rl_dataset)
     # print(msr_vtt_cat15_d4rl_dataset)
     # print(actions)
     # print(np.array(actions).shape)

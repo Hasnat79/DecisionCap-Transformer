@@ -2,6 +2,7 @@ import gym
 import numpy as np
 
 import collections
+import d4rl
 import pickle
 
 import d4rl
@@ -9,8 +10,8 @@ import d4rl
 
 datasets = []
 
-for env_name in ['halfcheetah', 'hopper', 'walker2d']:
-	for dataset_type in ['medium', 'medium-replay', 'expert']:
+for env_name in [ 'hopper']:
+	for dataset_type in ['medium']:
 		name = f'{env_name}-{dataset_type}-v2'
 		env = gym.make(name)
 		dataset = env.get_dataset()
@@ -31,7 +32,12 @@ for env_name in ['halfcheetah', 'hopper', 'walker2d']:
 			else:
 				final_timestep = (episode_step == 1000-1)
 			for k in ['observations', 'next_observations', 'actions', 'rewards', 'terminals']:
+				# print(type(dataset[k][i]))
 				data_[k].append(dataset[k][i])
+			# print(data_)
+			# for k, v in data_.items():
+			# 	if k in ['actions', 'observations']:
+			# 		print(k, v[0].shape)
 			if done_bool or final_timestep:
 				episode_step = 0
 				episode_data = {}
@@ -40,6 +46,7 @@ for env_name in ['halfcheetah', 'hopper', 'walker2d']:
 				paths.append(episode_data)
 				data_ = collections.defaultdict(list)
 			episode_step += 1
+
 
 		returns = np.array([np.sum(p['rewards']) for p in paths])
 		num_samples = np.sum([p['rewards'].shape[0] for p in paths])
