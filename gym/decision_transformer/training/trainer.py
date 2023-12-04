@@ -27,16 +27,20 @@ class Trainer:
 
         self.model.train()
         for _ in range(num_steps):
+            # print(_)
             train_loss = self.train_step()
+            # print(f"train_loss: {train_loss}")
             train_losses.append(train_loss)
             if self.scheduler is not None:
                 self.scheduler.step()
+
 
         logs['time/training'] = time.time() - train_start
 
         eval_start = time.time()
 
         self.model.eval()
+        # print(self.eval_fns)
         for eval_fn in self.eval_fns:
             outputs = eval_fn(self.model)
             for k, v in outputs.items():
@@ -47,6 +51,7 @@ class Trainer:
         logs['training/train_loss_mean'] = np.mean(train_losses)
         logs['training/train_loss_std'] = np.std(train_losses)
 
+        # print(self.diagnostics)
         for k in self.diagnostics:
             logs[k] = self.diagnostics[k]
 
@@ -59,6 +64,7 @@ class Trainer:
         return logs
 
     def train_step(self):
+        print(f"batch size: {self.batch_size}")
         states, actions, rewards, dones, attention_mask, returns = self.get_batch(self.batch_size)
         state_target, action_target, reward_target = torch.clone(states), torch.clone(actions), torch.clone(rewards)
 
