@@ -59,7 +59,7 @@ def run (variant):
     target_return = 3.92
     device = 'cuda'
 
-    file_path = "E:\\642\Final_project\decision-transformer\gym\\results\decision_cap_model_lite.pth"
+    file_path = "E:\\642\Final_project\decision-transformer\gym\\results\decision_cap_model_mid.pth"
     model.load_state_dict(torch.load(file_path))
     model.eval()
     model.to(device=device)
