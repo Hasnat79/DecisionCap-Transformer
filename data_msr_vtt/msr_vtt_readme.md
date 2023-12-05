@@ -14,7 +14,7 @@ The following files are reference files for CLIP:
     clip_text_embeds.py
 
 ## Step 3: [Download](https://drive.google.com/drive/folders/13GfPqJMRMYJFDhvZNZYIB5QN93CXZ03m?usp=drive_link) Cat15_encode_all_frames Directory
-Download the Cat15_encode_all_frames directory. This directory was generated in kaggle and is required for the dataset generation process
+Download the Cat15_encode_all_frames directory. This directory was generated in this [kaggle_notebook](https://www.kaggle.com/code/wenyuanli0326/clip-encodings/notebook) and is required for the dataset generation process
 
 ## Step 4: Generate Dataset File
 
