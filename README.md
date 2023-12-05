@@ -14,8 +14,9 @@
 ```bash 
 conda env create -f conda_env_dec_cap.yml
 ```
-2. Follow the instructions in the [msr_vtt_readme.md](data_msr_vtt%2Fmsr_vtt_readme.md) for additional setup related to the MSR-VTT dataset.
-3. Navigate to the gym/data folder and run [msr_vtt_d4rl_datasets.py](gym%2Fdata%2Fmsr_vtt_d4rl_datasets.py) file:
+**Dataset Loading**
+1. Follow the instructions in the [msr_vtt_readme.md](data_msr_vtt%2Fmsr_vtt_readme.md) for additional setup related to the MSR-VTT dataset.
+2. Navigate to the gym/data folder and run [msr_vtt_d4rl_datasets.py](gym%2Fdata%2Fmsr_vtt_d4rl_datasets.py) file:
 This will generate a pickle file named `msr_vtt_cat15_d4rl_dataset.pkl`.
 ```bash 
 python msr_vtt_d4rl_datasets.py
