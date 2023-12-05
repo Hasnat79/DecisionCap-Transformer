@@ -45,3 +45,8 @@ python single_vid_cap_generator.py
 
 ### Reference
 Chen, L., Lu, K., Rajeswaran, A., Lee, K., Grover, A., Laskin, M., Abbeel, P., Srinivas, A., Mordatch, I.: Decision Transformer: Reinforcement Learning via Sequence Modeling, http://arxiv.org/abs/2106.01345, (2021)
+
+### Contact
+Feel free to reach out if you have any questions or suggestions!
+- 📧 Email: hasnatabdullah79@gmail.com
+- 💼 LinkedIn: [Hasnat Md Abdullah ](https://www.linkedin.com/in/hasnat-md-abdullah/)
