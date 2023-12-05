@@ -42,6 +42,6 @@ python single_vid_cap_generator.py
 ### Additional Notes
 - Ensure all dependencies are installed and the Conda environment is activated before running any scripts.
 - For further details on the Decision Transformer algorithm, refer to the original paper by Chen et al. (2021).
-- 
+
 ### Reference
 Chen, L., Lu, K., Rajeswaran, A., Lee, K., Grover, A., Laskin, M., Abbeel, P., Srinivas, A., Mordatch, I.: Decision Transformer: Reinforcement Learning via Sequence Modeling, http://arxiv.org/abs/2106.01345, (2021)
