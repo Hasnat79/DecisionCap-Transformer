@@ -365,6 +365,7 @@ if __name__ == '__main__':
     parser.add_argument('--max_iters', type=int, default=500)
     # for big model : epoch = 1051 (almost learned full data)
     # for lite, used same step/iter but shorted the training epoch/iter -> 10
+    # for mid, iter 500
     parser.add_argument('--num_steps_per_iter', type=int, default=20) # total steps 21018 / 20 (steps/iter or 20 episode per iteration), total iteration 1051
     parser.add_argument('--device', type=str, default='cuda')
     parser.add_argument('--log_to_wandb', '-w', type=bool, default=False)

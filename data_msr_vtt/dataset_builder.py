@@ -88,10 +88,10 @@ if __name__ == '__main__':
     model = TFCLIPModel.from_pretrained("openai/clip-vit-base-patch32")
     tokenizer = AutoTokenizer.from_pretrained("openai/clip-vit-base-patch32")
 
-    # video_id_tokenized_cap = get_video_id_to_tokenized_caps (cat15_video_cap_data)
+    video_id_tokenized_cap = get_video_id_to_tokenized_caps (cat15_video_cap_data)
     video_id_tokenized_cap = load_json("./video_id_tokenized_cap.json")
 
-    # cat15_visual_video_id_feat = get_visual_feat(cat15_video_cap_data)
+    cat15_visual_video_id_feat = get_visual_feat(cat15_video_cap_data)
     cat15_visual_video_id_feat = load_json("./cat15_visual_video_id_feat.json")
 
     msr_vtt_cat15_d4rl_dataset = {}
@@ -199,7 +199,7 @@ if __name__ == '__main__':
     print(np.array(actions).shape)
     # print(terminals)
     print(np.array(terminals).shape)
-    print(np.array(action_tokens).shape)
+    # print(np.array(action_tokens).shape)
     print(np.array(rewards).shape)
     print(rewards)
     print(np.array(observations).shape)

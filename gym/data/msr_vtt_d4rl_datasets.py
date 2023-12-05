@@ -39,15 +39,15 @@ print(f"total steps: {N}")
 episode_step = 0
 paths = []
 data_ = collections.defaultdict(list)
-print(msr_vtt_d4rl_dataset['video_ids'])
+# print(msr_vtt_d4rl_dataset['video_ids'])
 with tqdm(total =N) as pbar:
     for i in range(N):
         done_bool = msr_vtt_d4rl_dataset['terminals'][i]
         # print(done_bool)
         #  action vectors are created more than size 3 due to words like 2016 --> array([49406,   273,   271,   272,   277, 49407])
         # if found, skipping the whole episode
-        if len(msr_vtt_d4rl_dataset['actions'][i]) == 3:
-            for k in ['actions', 'terminals', 'rewards', 'observations', 'video_ids']:
+        if len(msr_vtt_d4rl_dataset['action_tokens'][i]) == 3:
+            for k in ['actions', 'terminals', 'rewards', 'observations', 'video_ids','action_tokens']:
                 # print(np.array(msr_vtt_d4rl_dataset[k][i]))
                 if k =="terminals" or k == 'rewards':
                     data_[k].append(msr_vtt_d4rl_dataset[k][i])
@@ -65,6 +65,8 @@ with tqdm(total =N) as pbar:
 
                     data_[k].append(np.array(msr_vtt_d4rl_dataset[k][i]))
                 elif k == 'video_ids':
+                    data_[k].append(np.array(msr_vtt_d4rl_dataset[k][i]))
+                elif k=='action_tokens':
                     data_[k].append(np.array(msr_vtt_d4rl_dataset[k][i]))
 
 

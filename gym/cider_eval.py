@@ -59,7 +59,7 @@ def run (variant):
     target_return = 3.92
     device = 'cuda'
 
-    file_path = "E:\\642\Final_project\decision-transformer\gym\\results\decision_cap_model_mid.pth"
+    file_path = "E:\\642\Final_project\decision-transformer\gym\\results\decision_cap_model_lite.pth"
     model.load_state_dict(torch.load(file_path))
     model.eval()
     model.to(device=device)
@@ -71,7 +71,7 @@ def run (variant):
     with open(msr_cat15_video_id_cap_datapath,'r') as f :
         msr_cat15_video_id_cap = json.load(f)
 
-    # ['actions', 'terminals', 'rewards', 'observations', 'video_ids']
+    # ['actions', 'terminals', 'rewards', 'observations', 'video_ids','action_tokens']
     for t in range(len(trajectories)):
         print(f"episode: {t}")
         state = trajectories[t]['observations'][0]
@@ -104,8 +104,10 @@ def run (variant):
             print(action)
             # word token decode
             word_token_idx = np.argmax(action)
-            action_word_token = trajectories[t]['actions'][step][word_token_idx]
-            token_list.append(action_word_token)
+            token_list.append(trajectories[t]['action_tokens'][step][word_token_idx])
+            print(trajectories[t]['video_ids'][step])
+            # action_word_token = trajectories[t]['actions'][step][word_token_idx]
+            # token_list.append(action_word_token)
 
             state = trajectories[t]['observations'][step]
             print(f"state ** : {state}")
@@ -114,7 +116,7 @@ def run (variant):
 
             cur_state = torch.from_numpy(state).to(device=device).reshape(1, state_dim)
             states = torch.from_numpy(state).reshape(1, state_dim).to(device=device, dtype=torch.float32)
-            # states = torch.cat([states, cur_state], dim=0)
+            states = torch.cat([states, cur_state], dim=0)
             rewards[-1] = reward
             pred_return = target_return[0, -1] - (reward / scale)
             target_return = torch.cat(
@@ -130,7 +132,7 @@ def run (variant):
                 break
 
             # print(state)
-
+        print(token_list)
         print(decode(token_list))
         break
 
