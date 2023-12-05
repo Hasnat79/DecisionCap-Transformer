@@ -73,24 +73,26 @@ def run (variant):
 
     # ['actions', 'terminals', 'rewards', 'observations', 'video_ids','action_tokens']
     for t in range(len(trajectories)):
-        print(f"episode: {t}")
+        # print(f"episode: {t}")
         state = trajectories[t]['observations'][0]
         states = torch.from_numpy(state).reshape(1, state_dim).to(device=device, dtype=torch.float32)
         actions = torch.zeros((0, act_dim), device=device, dtype=torch.float32)
         rewards = torch.zeros(0, device=device, dtype=torch.float32)
         ep_return = target_return
-        print(ep_return)
+        # print(ep_return)
         target_return = torch.tensor(ep_return, device=device, dtype=torch.float32).reshape(1, 1)
         timesteps = torch.tensor(0, device=device, dtype=torch.long).reshape(1, 1)
 
         token_list =[]
+        print("video id: ",end="")
+        print(trajectories[t]['video_ids'][0])
         for step in range(max_ep_len):
             print(f"step: {step}")
 
             # add padding
             actions = torch.cat([actions, torch.zeros((1, act_dim), device=device)], dim=0)
             rewards = torch.cat([rewards, torch.zeros(1, device=device)])
-            print(f"states: {states}")
+            # print(f"states: {states}")
             # model predicting action
             action = model.get_action(
                 (states.to(dtype=torch.float32) - state_mean) / state_std,
@@ -101,11 +103,11 @@ def run (variant):
             )
             actions[-1] = action
             action = action.detach().cpu().numpy()
-            print(action)
+            print(f"predicted action: {action}")
             # word token decode
             word_token_idx = np.argmax(action)
             token_list.append(trajectories[t]['action_tokens'][step][word_token_idx])
-            print(trajectories[t]['video_ids'][step])
+
             # action_word_token = trajectories[t]['actions'][step][word_token_idx]
             # token_list.append(action_word_token)
 
@@ -124,7 +126,7 @@ def run (variant):
             timesteps = torch.cat(
                 [timesteps,
                  torch.ones((1, 1), device=device, dtype=torch.long) * (t + 1)], dim=1)
-
+            print("--"*50)
 
 
             if done:
@@ -132,8 +134,8 @@ def run (variant):
                 break
 
             # print(state)
-        print(token_list)
-        print(decode(token_list))
+        print(f"Clip Text Encodings: {token_list}")
+        print(f"Generated Caption: {decode(token_list)}")
         break
 
 
