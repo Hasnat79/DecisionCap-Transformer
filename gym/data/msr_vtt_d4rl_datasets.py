@@ -64,6 +64,8 @@ with tqdm(total =N) as pbar:
                         # skipping these steps | impact on the performance of the model : unknown
 
                     data_[k].append(np.array(msr_vtt_d4rl_dataset[k][i]))
+                elif k == 'video_ids':
+                    data_[k].append(np.array(msr_vtt_d4rl_dataset[k][i]))
 
 
             # print(data_)

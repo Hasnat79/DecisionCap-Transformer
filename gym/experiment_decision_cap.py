@@ -334,10 +334,10 @@ def experiment(
         # print(outputs)
         out.append(outputs)
 
-    file_path = "./results/decision_cap_model.pth"
+    file_path = "./results/decision_cap_model_mid.pth"
     torch.save(model.state_dict(), file_path)
 
-    with open("./results/log.json",'w') as f :
+    with open("./results/log_mid.json",'w') as f :
         json.dump(out,f,indent=4)
 
     # file_path = "./result/decision_cap_model.pth"
@@ -362,7 +362,9 @@ if __name__ == '__main__':
     parser.add_argument('--weight_decay', '-wd', type=float, default=1e-4)
     parser.add_argument('--warmup_steps', type=int, default=10000)
     parser.add_argument('--num_eval_episodes', type=int, default=100)
-    parser.add_argument('--max_iters', type=int, default=1051)
+    parser.add_argument('--max_iters', type=int, default=500)
+    # for big model : epoch = 1051 (almost learned full data)
+    # for lite, used same step/iter but shorted the training epoch/iter -> 10
     parser.add_argument('--num_steps_per_iter', type=int, default=20) # total steps 21018 / 20 (steps/iter or 20 episode per iteration), total iteration 1051
     parser.add_argument('--device', type=str, default='cuda')
     parser.add_argument('--log_to_wandb', '-w', type=bool, default=False)

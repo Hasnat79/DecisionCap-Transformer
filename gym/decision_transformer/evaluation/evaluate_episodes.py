@@ -1,10 +1,9 @@
 import numpy as np
 import torch
 import random
-from transformers import AutoTokenizer, TFCLIPModel
 
-model = TFCLIPModel.from_pretrained("openai/clip-vit-base-patch32")
-tokenizer = AutoTokenizer.from_pretrained("openai/clip-vit-base-patch32")
+
+
 def evaluate_episode(
         env,
         state_dim,

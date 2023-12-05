@@ -100,7 +100,7 @@ if __name__ == '__main__':
     rewards = []
     observations = []
     video_ids = []
-
+    action_tokens = []
     with tqdm(total = len(video_id_tokenized_cap.keys())) as pbar:
         for video_id,caps in video_id_tokenized_cap.items():
             # print(video_id,len(caps))
@@ -109,15 +109,26 @@ if __name__ == '__main__':
             for tokenized_cap in caps:
 
                     # action and terminals steps
-                    for word in tokenized_cap:
-                        # print(word)
-                        action_vector = create_action_vector(tokenizer,word).tolist()
-                        # print(action_vector)
-                        # print(type(action_vector))
-                        actions.append(action_vector)
-                        if word == tokenized_cap[-1]:
+
+                    for i in range(len(tokenized_cap)):
+                        if i<len(tokenized_cap)-1:
+                            word = tokenized_cap[i+1]
+                            # print(word)
+                            action_token = create_action_vector(tokenizer,word).tolist()
+                            action_vector = [0, 1, 0]
+                            terminals.append(False)
+                        else:
+                            word = "."
+                            action_vector=[0,0,1]
+                            action_token = create_action_vector(tokenizer,word).tolist()
                             terminals.append(True)
-                        else: terminals.append(False)
+
+                        actions.append(action_vector)
+                        action_tokens.append(action_token)
+
+
+
+
 
                     # reward steps & video_ids
 
@@ -146,11 +157,15 @@ if __name__ == '__main__':
                     # print(f"len(word_count): {word_count}") #12
                     # print(f"len(sampled_encodes): {len(sampled_encodes)}") #12
                     # print(sampled_encodes)
+                    temp_word_list =[]
+
                     for word,encode in zip(tokenized_cap,encodes):
                         # print(word)
                         # print(encode)
                         # print(np.array(encode).shape)
-                        # print()
+                        temp_word_list.append(word)
+                        word = " ".join(temp_word_list)
+                        # print(word)
                         visual_feat = np.array(encode)
                         text_feat = get_clip_text_feat(model, tokenizer, word)
                         # print(type(text_feat)) #<class 'tensorflow.python.framework.ops.EagerTensor'>
@@ -163,6 +178,9 @@ if __name__ == '__main__':
                         # print(len(observation)) #12
                         observations.append(observation)
 
+
+
+
             pbar.update(1)
 
         # print(len(observations))
@@ -173,13 +191,20 @@ if __name__ == '__main__':
     msr_vtt_cat15_d4rl_dataset['rewards'] = rewards
     msr_vtt_cat15_d4rl_dataset['observations'] = observations
     msr_vtt_cat15_d4rl_dataset['video_ids'] = video_ids
-
+    msr_vtt_cat15_d4rl_dataset['action_tokens'] = action_tokens
 
     save_json("../gym/data/msr_vtt_cat15_d4rl_dataset.json", msr_vtt_cat15_d4rl_dataset)
     # print(msr_vtt_cat15_d4rl_dataset)
     # print(actions)
-    # print(np.array(actions).shape)
+    print(np.array(actions).shape)
     # print(terminals)
+    print(np.array(terminals).shape)
+    print(np.array(action_tokens).shape)
+    print(np.array(rewards).shape)
+    print(rewards)
+    print(np.array(observations).shape)
+    print(np.array(video_ids).shape)
+    # print(np.array(rewards))
     # # print(actions.shape)
     # print(len(actions))
     # print(steps)

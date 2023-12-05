@@ -3,7 +3,7 @@ from transformers import AutoTokenizer, TFCLIPModel
 model = TFCLIPModel.from_pretrained("openai/clip-vit-base-patch32")
 tokenizer = AutoTokenizer.from_pretrained("openai/clip-vit-base-patch32")
 
-inputs = tokenizer("a dog", padding=True, return_tensors="tf")
+inputs = tokenizer(".", padding=True, return_tensors="tf")
 print(f"input sentence: a dog")
 print(f"encodings: {inputs['input_ids'].numpy()[0]}")
 # [49406,   273,   271,   272,   277, 49407]
