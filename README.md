@@ -22,7 +22,8 @@ python msr_vtt_d4rl_datasets.py
 ```
 
 ### Training The model 
-Run the training script [experiment_decision_cap.py](gym%2Fexperiment_decision_cap.py) to train the Decision Transformer model on the prepared dataset. Adjust the parameters using argparse arguments as specified in the script.
+1. We started by trying to use the basic transformer as our model (see file [UseBasicTransformer.ipynb](UseBasicTransformer.ipynb)). One episode is (R1, s1, a1, R2, s2, a2,..., RT, sT, aT). The encoder input is set to be (R1, s1, R2, s2,..., RT, sT), the decoder input is (a1, a2,..., aT) and the output is (a1, a2,..., aT). The session crashes for unknown reasons whenever it runs model.fit().
+2. Run the training script gym[experiment_decision_cap.py](gym%2Fexperiment_decision_cap.py) to train the Decision Transformer model on the prepared dataset. Adjust the parameters using argparse arguments as specified in the script.
 ```bash
 python experiment_decision_cap.py
 ```
@@ -30,6 +31,6 @@ python experiment_decision_cap.py
 ### Additional Notes
 - Ensure all dependencies are installed and the Conda environment is activated before running any scripts.
 - For further details on the Decision Transformer algorithm, refer to the original paper by Chen et al. (2021).
-
-## Reference
+- 
+### Reference
 Chen, L., Lu, K., Rajeswaran, A., Lee, K., Grover, A., Laskin, M., Abbeel, P., Srinivas, A., Mordatch, I.: Decision Transformer: Reinforcement Learning via Sequence Modeling, http://arxiv.org/abs/2106.01345, (2021)

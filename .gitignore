@@ -9,5 +9,7 @@ data_msr_vtt/cider_metric/__pycache__/
 gym/data/msr_vtt_cat15_d4rl_dataset.pkl
 gym/data/hopper-medium-v2.pkl
 decision_transformer/envs/
-
+gym/data/download_d4rl_datasets.py
+gym/data/download_testing.py
+gym/results/conda_env.yml
 
