@@ -13,6 +13,7 @@
 1. Create a Conda environment using the provided `conda_env_dec_cap.yml` file:
 ```bash 
 conda env create -f conda_env_dec_cap.yml
+conda activate dt_env
 ```
 **Dataset Loading**
 1. Follow the instructions in the [msr_vtt_readme.md](data_msr_vtt%2Fmsr_vtt_readme.md) for additional setup related to the MSR-VTT dataset.
